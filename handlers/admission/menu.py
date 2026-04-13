@@ -9,8 +9,8 @@ def get_admission_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="📘 Правила вступу", callback_data="rules")],
         [InlineKeyboardButton(text="📑 Необхідні документи", callback_data="docs")],
-        [InlineKeyboardButton(text="🎓 Підготовчі курси", callback_data="prep_courses")]
-        [InlineKeyboardButton(text="🔙 Повернутися до головного меню", callback_data="back_to_main")]
+        [InlineKeyboardButton(text="🎓 Підготовчі курси", callback_data="prep_courses")],
+        [InlineKeyboardButton(text="🔙 Повернутися до головного меню", callback_data="back_to_main")],
     ])
     return keyboard
 
