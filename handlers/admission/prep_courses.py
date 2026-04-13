@@ -5,7 +5,7 @@ router = Router()
 
 def get_prep_courses_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="✍️ Записатися на курси", callback_data="enroll_prep")],
+        [InlineKeyboardButton(text="✍️ Записатися на курси", url="https://docs.google.com/forms/d/e/1FAIpQLScD-AOugswgwQi3Ob0GeQHcUn9K-5Ir2BZ590DLGD8GuNQ92Q/viewform?usp=header")],
         [InlineKeyboardButton(text="🔙 Повернутися до вступу", callback_data="admission_menu")]
     ])
     return keyboard
@@ -37,7 +37,7 @@ async def prep_courses_handler(callback: CallbackQuery):
 async def enroll_prep_handler(callback: CallbackQuery):
     await callback.message.edit_text(
         "📝 <b>Запис на курси</b>\n\n"
-        "Для реєстрації, будь ласка, зверніться до приймальної комісії або заповніть форму https://docs.google.com/forms/d/e/1FAIpQLScD-AOugswgwQi3Ob0GeQHcUn9K-5Ir2BZ590DLGD8GuNQ92Q/viewform?usp=header.\n\n"
+        "Для реєстрації, будь ласка, зверніться до приймальної комісії або заповніть форму нижче.\n\n"
         "📞 Контакти: +380671030577 (Telegram, Viber)",
         reply_markup=get_prep_courses_keyboard(),
         parse_mode="HTML"
