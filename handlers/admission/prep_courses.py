@@ -37,8 +37,8 @@ async def prep_courses_handler(callback: CallbackQuery):
 async def enroll_prep_handler(callback: CallbackQuery):
     await callback.message.edit_text(
         "📝 <b>Запис на курси</b>\n\n"
-        "Для реєстрації, будь ласка, зверніться до приймальної комісії або заповніть форму (тут буде посилання).\n\n"
-        "📞 Контакти: [Твій номер]",
+        "Для реєстрації, будь ласка, зверніться до приймальної комісії або заповніть форму https://docs.google.com/forms/d/e/1FAIpQLScD-AOugswgwQi3Ob0GeQHcUn9K-5Ir2BZ590DLGD8GuNQ92Q/viewform?usp=header.\n\n"
+        "📞 Контакти: +380671030577 (Telegram, Viber)",
         reply_markup=get_prep_courses_keyboard(),
         parse_mode="HTML"
     )
