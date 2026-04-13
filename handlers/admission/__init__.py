@@ -5,6 +5,7 @@ from .documents import router as docs_router
 from .specialties import router as spec_router
 from .price import router as price_router
 from .contacts import router as contacts_router
+from .prep_courses import router as prep_courses_router
 
 router = Router()
 
@@ -14,3 +15,4 @@ router.include_router(docs_router)
 router.include_router(spec_router)
 router.include_router(price_router)
 router.include_router(contacts_router)
+router.include_router(prep_courses_router)
