@@ -3,7 +3,7 @@ import asyncio
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
-from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.client.session.aiohttp import AiohttpSession # можно удалить
 from handlers import router as start_router
 from handlers.admission import router as admission_router
 from handlers.admin import router as admin_router
@@ -12,7 +12,7 @@ from handlers.college import router as college_router
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 
-session = AiohttpSession(proxy="http://proxy.server:3128")
+session = AiohttpSession(proxy="http://proxy.server:3128") # можно удалить
 
 dp = Dispatcher()
 dp.include_router(start_router)
@@ -22,7 +22,7 @@ dp.include_router(college_router)
 
 async def main():
     # bot = Bot(token=TOKEN)
-    bot = Bot(token=TOKEN, session=session)
+    bot = Bot(token=TOKEN, session=session) # можно удалить
     await bot.set_my_commands([
         BotCommand(command="start", description="Запуск бота 🚀"),
         BotCommand(command="restart", description="🔄 Перезапустити бота"),
