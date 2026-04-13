@@ -21,7 +21,7 @@ dp.include_router(college_router)
 async def main():
     bot = Bot(token=TOKEN)
     await bot.set_my_commands([
-        BotCommand(command="start", description="Запуск бота"),
+        BotCommand(command="start", description="🚀 Запуск бота"),
         BotCommand(command="restart", description="🔄 Перезапустити бота"),
     ])
     print("Бот запущен...")
