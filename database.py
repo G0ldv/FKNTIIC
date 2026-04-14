@@ -45,3 +45,11 @@ def get_all_users():
     users = [row[0] for row in cursor.fetchall()]
     conn.close()
     return users
+
+def get_all_users_full():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT user_id, full_name, username, phone FROM users')
+    users = cursor.fetchall()
+    conn.close()
+    return users

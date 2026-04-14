@@ -3,6 +3,9 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+import io
+from aiogram.types import BufferedInputFile
+from database import get_all_users_full
 from database import get_users_count, get_all_users
 
 router = Router()
@@ -22,7 +25,8 @@ def confirm_kb():
 async def admin_menu(message: Message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="📊 Статистика", callback_data="admin_stats")],
-        [InlineKeyboardButton(text="📢 Створити розсилку", callback_data="start_broadcast")]
+        [InlineKeyboardButton(text="📢 Створити розсилку", callback_data="start_broadcast")],
+        [InlineKeyboardButton(text="📄 Завантажити список", callback_data="download_users")]
     ])
     await message.answer("🛠 <b>Панель керування</b>", reply_markup=kb, parse_mode="HTML")
 
@@ -70,3 +74,27 @@ async def send_broadcast(callback: CallbackQuery, state: FSMContext, bot: Bot):
 async def cancel_broadcast(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await callback.message.edit_text("❌ Розсилку скасовано.")
+
+@router.callback_query(F.data == "download_users")
+async def send_users_list(callback: CallbackQuery):
+    users = get_all_users_full()
+    
+    if not users:
+        await callback.answer("База даних поки що порожня.")
+        return
+
+    report = "СПИСОК КОРИСТУВАЧІВ БОТА\n"
+    report += "="*40 + "\n"
+    for u in users:
+        username = f"@{u[2]}" if u[2] else "немає"
+        phone = u[3] if u[3] else "не вказано"
+        report += f"👤 {u[1]} | ID: {u[0]} | Юзер: {username} | Тел: {phone}\n"
+
+    file_bytes = io.BytesIO(report.encode('utf-8'))
+    file_for_tg = BufferedInputFile(file_bytes.getvalue(), filename="users_list.txt")
+
+    await callback.message.answer_document(
+        document=file_for_tg, 
+        caption="📂 Ось актуальний список усіх користувачів."
+    )
+    await callback.answer()
