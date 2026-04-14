@@ -1,9 +1,9 @@
-from os import getenv
 import asyncio
+from os import getenv
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
-# from aiogram.client.session.aiohttp import AiohttpSession # можно удалить
+from database import init_db
 from handlers import router as start_router
 from handlers.admission import router as admission_router
 from handlers.admin import router as admin_router
@@ -12,24 +12,29 @@ from handlers.college import router as college_router
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 
-# session = AiohttpSession(proxy="http://proxy.server:3128") # можно удалить
-
-dp = Dispatcher()
-dp.include_router(start_router)
-dp.include_router(admission_router)
-dp.include_router(admin_router)
-dp.include_router(college_router)
-
 async def main():
+    init_db()
+    
     bot = Bot(token=TOKEN)
-    # bot = Bot(token=TOKEN, session=session) # можно удалить
+    dp = Dispatcher()
+
+    dp.include_router(start_router)
+    dp.include_router(admission_router)
+    dp.include_router(admin_router)
+    dp.include_router(college_router)
+
     await bot.set_my_commands([
         BotCommand(command="start", description="Запуск бота 🚀"),
-        BotCommand(command="restart", description="🔄 Перезапустити бота"),
+        BotCommand(command="restart", description="Перезапустити бота 🔄"),
+        BotCommand(command="admin", description="Панель адміна 🔐")
     ])
-    print("Бот запущен...")
+
+    print("Бот запущений і готовий до роботи...")
+
     await dp.start_polling(bot)
 
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Бот вимкнений")
