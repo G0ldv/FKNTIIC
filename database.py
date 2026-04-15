@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Railway автоматично надає DATABASE_URL
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 async def get_connection():
@@ -25,7 +24,6 @@ async def init_db():
 async def add_user(user_id, full_name=None, username=None):
     conn = await get_connection()
     try:
-        # INSERT OR REPLACE в Postgres робиться через ON CONFLICT
         await conn.execute('''
             INSERT INTO users (user_id, full_name, username)
             VALUES ($1, $2, $3)
