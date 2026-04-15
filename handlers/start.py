@@ -8,7 +8,7 @@ router = Router()
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message):
-    add_user(
+    await add_user(
         user_id=message.from_user.id, 
         full_name=message.from_user.full_name, 
         username=message.from_user.username

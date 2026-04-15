@@ -1,55 +1,55 @@
-import sqlite3
+import os
+import asyncpg
+from dotenv import load_dotenv
 
-def init_db():
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('''
+load_dotenv()
+
+# Railway автоматично надає DATABASE_URL
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+async def get_connection():
+    return await asyncpg.connect(DATABASE_URL)
+
+async def init_db():
+    conn = await get_connection()
+    await conn.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            user_id INTEGER PRIMARY KEY,
+            user_id BIGINT PRIMARY KEY,
             full_name TEXT,
             username TEXT,
             phone TEXT
         )
     ''')
-    conn.commit()
-    conn.close()
+    await conn.close()
 
-def add_user(user_id, full_name=None, username=None):
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
+async def add_user(user_id, full_name=None, username=None):
+    conn = await get_connection()
     try:
-        cursor.execute('''
-            INSERT OR REPLACE INTO users (user_id, full_name, username, phone) 
-            VALUES (?, ?, ?, (SELECT phone FROM users WHERE user_id = ?))
-        ''', (user_id, full_name, username, user_id))
-        conn.commit()
-    except Exception as e:
-        print(f"Помилка бази: {e}")
+        # INSERT OR REPLACE в Postgres робиться через ON CONFLICT
+        await conn.execute('''
+            INSERT INTO users (user_id, full_name, username)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (user_id) DO UPDATE 
+            SET full_name = EXCLUDED.full_name, 
+                username = EXCLUDED.username
+        ''', user_id, full_name, username)
     finally:
-        conn.close()
+        await conn.close()
 
-def get_users_count():
-    """Повертає загальну кількість користувачів для статистики"""
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT COUNT(*) FROM users')
-    count = cursor.fetchone()[0]
-    conn.close()
-    return count
+async def get_users_count():
+    conn = await get_connection()
+    count = await conn.fetchval('SELECT COUNT(*) FROM users')
+    await conn.close()
+    return count or 0
 
-def get_all_users():
-    """Повертає список усіх ID користувачів для розсилки"""
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT user_id FROM users')
-    users = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return users
+async def get_all_users():
+    conn = await get_connection()
+    rows = await conn.fetch('SELECT user_id FROM users')
+    await conn.close()
+    return [row['user_id'] for row in rows]
 
-def get_all_users_full():
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT user_id, full_name, username, phone FROM users')
-    users = cursor.fetchall()
-    conn.close()
-    return users
+async def get_all_users_full():
+    conn = await get_connection()
+    rows = await conn.fetch('SELECT user_id, full_name, username, phone FROM users')
+    await conn.close()
+    return rows

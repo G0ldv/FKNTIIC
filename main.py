@@ -13,7 +13,7 @@ load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 
 async def main():
-    init_db()
+    await init_db()
     
     bot = Bot(token=TOKEN)
     dp = Dispatcher()
@@ -26,7 +26,7 @@ async def main():
     await bot.set_my_commands([
         BotCommand(command="start", description="Запуск бота 🚀"),
         BotCommand(command="restart", description="Перезапустити бота 🔄"),
-        BotCommand(command="admin", description="Панель адміна 🔐")
+        BotCommand(command="admin", description="Панель адміна")
     ])
 
     print("Бот запущений і готовий до роботи...")

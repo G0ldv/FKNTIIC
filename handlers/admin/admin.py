@@ -5,8 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 import io
 from aiogram.types import BufferedInputFile
-from database import get_all_users_full
-from database import get_users_count, get_all_users
+from database import get_all_users_full, get_users_count, get_all_users
 
 router = Router()
 ADMIN_IDS = [1779431249]
@@ -32,7 +31,7 @@ async def admin_menu(message: Message):
 
 @router.callback_query(F.data == "admin_stats")
 async def stats(callback: CallbackQuery):
-    count = get_users_count()
+    count = await get_users_count()
     await callback.message.answer(f"👥 Всього користувачів: {count}")
     await callback.answer()
 
@@ -55,7 +54,7 @@ async def ask_confirm(message: Message, state: FSMContext):
 @router.callback_query(F.data == "confirm_yes", BroadcastStates.confirm_broadcast)
 async def send_broadcast(callback: CallbackQuery, state: FSMContext, bot: Bot):
     data = await state.get_data()
-    users = get_all_users()
+    users = await get_all_users()
     count = 0
     
     await callback.message.edit_text("🚀 Розсилка розпочата...")
@@ -77,7 +76,7 @@ async def cancel_broadcast(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "download_users")
 async def send_users_list(callback: CallbackQuery):
-    users = get_all_users_full()
+    users = await get_all_users_full()
     
     if not users:
         await callback.answer("База даних поки що порожня.")
