@@ -13,7 +13,7 @@ load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
 
 async def main():
-    await init_db()
+    await init_db() 
     
     bot = Bot(token=TOKEN)
     dp = Dispatcher()
