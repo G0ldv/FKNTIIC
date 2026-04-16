@@ -5,7 +5,7 @@ import os
 
 router = Router()
 
-def get_specialties_keyboard():
+def get_motivation_examples_keyboard():
     builder = InlineKeyboardBuilder()
     specialties = [
         ("📊 D5 Маркетинг", "D5"),
@@ -22,60 +22,82 @@ def get_specialties_keyboard():
         ("🌍 J3 Туризм та рекреація", "J3")
     ]
     for name, code in specialties:
-        builder.button(text=name, callback_data=f"example_{code}")
-    builder.adjust(1)
-    builder.row(InlineKeyboardButton(text="⬅️ Назад", callback_data="motivation_letter"))
+        builder.button(text=name, callback_data=f"get_ml_{code}")
+    builder.adjust(2)
+    builder.row(InlineKeyboardButton(text="🔙 Назад до меню", callback_data="motivation_letter"))
     return builder.as_markup()
+
+def get_after_file_download_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🔙 Назад до списку", callback_data="motivation_examples_menu")]
+    ])
+    return keyboard
 
 @router.callback_query(F.data == "motivation_letter")
 async def motivation_main(callback: CallbackQuery):
+    await callback.message.delete() 
     text = (
         "<b>📝 Мотиваційний лист</b>\n\n"
-        "Це документ, у якому ви обґрунтовуєте своє бажання навчатися на конкретній спеціальності. "
-        "Він подається в електронному кабінеті при подачі заяви.\n\n"
-        "💡 <b>Що ви знайдете тут:</b>\n"
-        "• Загальні вимоги до оформлення та структури;\n"
-        "• Приклади написання для кожної спеціальності нашого коледжу."
+        "Оберіть потрібний розділ. Ви можете ознайомитися з вимогами або завантажити готовий приклад для своєї спеціальності."
     )
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📋 Вимоги до листа (PDF)", callback_data="motivation_req_file")],
-        [InlineKeyboardButton(text="📂 Приклади за спеціальностями", callback_data="motivation_examples")],
-        [InlineKeyboardButton(text="⬅️ Назад до документів", callback_data="docs")]
+        [InlineKeyboardButton(text="📋 Вимоги до оформлення", callback_data="ml_requirements")],
+        [InlineKeyboardButton(text="📂 Приклади за спеціальностями", callback_data="motivation_examples_menu")],
+        [InlineKeyboardButton(text="⬅️ Повернутися до документів", callback_data="docs")]
     ])
-    await callback.message.edit_text(text, reply_markup=kb, parse_mode="HTML")
+    await callback.message.answer(text, reply_markup=kb, parse_mode="HTML")
     await callback.answer()
 
-@router.callback_query(F.data == "motivation_req_file")
-async def send_requirements(callback: CallbackQuery):
-    file_path = "assets/files/requirements.pdf"
-    if os.path.exists(file_path):
-        await callback.message.answer_document(
-            FSInputFile(file_path),
-            caption="📋 <b>Вимоги до написання мотиваційного листа</b>",
-            parse_mode="HTML"
-        )
-    else:
-        await callback.message.answer("⚠️ Файл з вимогами наразі відсутній.")
+@router.callback_query(F.data == "ml_requirements")
+async def show_requirements(callback: CallbackQuery):
+    await callback.message.delete()
+    text = (
+        "<b>📋 Основні вимоги до листа:</b>\n\n"
+        "• Обов'язкова наявність 'шапки' (ПІБ, адреса, контакти).\n"
+        "• Зазначення місця попереднього навчання.\n"
+        "• Обґрунтування вибору спеціальності.\n"
+        "• Опис особистих якостей та прагнень.\n"
+        "• Відсутність помилок та офіційний стиль."
+    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📥 Завантажити інструкцію (PDF)", callback_data="send_req_pdf")],
+        [InlineKeyboardButton(text="🔙 Назад", callback_data="motivation_letter")]
+    ])
+    await callback.message.answer(text, reply_markup=kb, parse_mode="HTML")
     await callback.answer()
 
-@router.callback_query(F.data == "motivation_examples")
+@router.callback_query(F.data == "motivation_examples_menu")
 async def list_examples(callback: CallbackQuery):
-    await callback.message.edit_text(
-        "Оберіть спеціальність, щоб завантажити приклад мотиваційного листа:",
-        reply_markup=get_specialties_keyboard()
+    await callback.message.delete()
+    await callback.message.answer(
+        "Оберіть спеціальність, щоб отримати відповідний приклад у форматі PDF:",
+        reply_markup=get_motivation_examples_keyboard()
     )
     await callback.answer()
 
-@router.callback_query(F.data.startswith("example_"))
-async def send_example(callback: CallbackQuery):
-    spec_code = callback.data.split("_")[1]
-    file_path = f"assets/files/ml_{spec_code}.pdf"
+@router.callback_query(F.data.startswith("get_ml_") | (F.data == "send_req_pdf"))
+async def send_motivation_file(callback: CallbackQuery):
+    await callback.answer("Надсилаю документ...")
+    await callback.message.delete()
+    
+    if callback.data == "send_req_pdf":
+        file_path = "assets/pdf/requirements.pdf"
+        caption = "📋 <b>Вимоги до написання мотиваційного листа</b>"
+    else:
+        code = callback.data.split("_")[2]
+        file_path = f"assets/pdf/ml_{code}.pdf"
+        caption = f"📄 <b>Приклад листа для спеціальності {code}</b>"
+
     if os.path.exists(file_path):
         await callback.message.answer_document(
-            FSInputFile(file_path),
-            caption=f"📄 <b>Приклад листа для спеціальності {spec_code}</b>",
+            document=FSInputFile(file_path),
+            caption=caption,
+            reply_markup=get_after_file_download_keyboard(),
             parse_mode="HTML"
         )
     else:
-        await callback.message.answer(f"⚠️ Приклад для спеціальності {spec_code} ще не завантажено.")
+        await callback.message.answer(
+            "❌ Файл тимчасово відсутній на сервері.",
+            reply_markup=get_after_file_download_keyboard()
+        )
     await callback.answer()
