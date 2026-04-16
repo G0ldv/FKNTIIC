@@ -28,7 +28,8 @@ async def command_start_handler(message: Message):
     await message.answer_photo(
         photo=photo,
         caption=welcome_text,
-        reply_markup=main_menu
+        reply_markup=main_menu,
+        parse_mode="HTML"
     )
 
 @router.message(Command("restart"))
