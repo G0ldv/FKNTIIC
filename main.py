@@ -10,27 +10,10 @@ from handlers import router as start_router
 from handlers.admission import router as admission_router
 from handlers.admin import router as admin_router
 from handlers.college import router as college_router
-
-from typing import Any, Awaitable, Callable, Dict
-from aiogram import BaseMiddleware
-from aiogram.types import TelegramObject, Message, CallbackQuery
+from handlers.middlewares.outer import ParseModeMiddleware
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
- 
-class ParseModeMiddleware(BaseMiddleware):
-    async def __call__(
-        self,
-        handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
-        event: TelegramObject,
-        data: Dict[str, Any]
-    ) -> Any:
-        # Отримуємо об'єкт бота з даних
-        bot = data.get("bot")
-        if bot:
-            # Примусово оновлюємо властивості для поточного запиту
-            bot.default.parse_mode = "HTML"
-        return await handler(event, data)
 
 async def main():
     await init_db() 
