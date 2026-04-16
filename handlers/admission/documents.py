@@ -25,8 +25,7 @@ async def docs_main_handler(callback: CallbackQuery):
     await callback.message.edit_text(
         "📑 <b>Перелік документів для вступу</b>\n\n"
         "Оберіть вашу категорію, щоб побачити повний список необхідних документів:",
-        reply_markup=get_docs_main_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_docs_main_keyboard()
     )
     await callback.answer()
 
@@ -87,7 +86,6 @@ async def docs_detail_handler(callback: CallbackQuery):
         )
     await callback.message.edit_text(
         text,
-        reply_markup=get_back_to_docs_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_back_to_docs_keyboard()
     )
     await callback.answer()

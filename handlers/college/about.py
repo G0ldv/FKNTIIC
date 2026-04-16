@@ -31,16 +31,14 @@ async def about_main_handler(message: Message, state: FSMContext):
         "КНТІІС ОНТУ — це не просто навчальний заклад, це місце з історією, "
         "власним заповідником та активним студентським життям.\n\n"
         "Оберіть, що саме вас цікавить: 👇",
-        reply_markup=get_about_menu_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_about_menu_keyboard()
     )
 
 @router.callback_query(F.data == "open_about_menu")
 async def open_about_menu(callback: CallbackQuery):
     await callback.message.edit_text(
         "🏛 <b>Розділ про коледж:</b>\n\nОберіть цікавий для вас пункт:",
-        reply_markup=get_about_menu_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_about_menu_keyboard()
     )
 
 @router.callback_query(F.data == "back_to_main")

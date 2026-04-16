@@ -14,7 +14,7 @@ def get_motivation_examples_keyboard():
         ("⚡ G3 Електрична інженерія", "G3"),
         ("🧪 G1 Хімічні технології та інженерія", "G1"),
         ("📡 G5 Електроніка, електронні комунікації, приладобудування та радіотехніка", "G5"),
-        ("💻 G5(K) Комп’ютерні технології та електронні комунікації", "G5(K)"),
+        ("💻 G5(K) Комп’ютерні технології та електронні комунікації", "G5_K"),
         ("🤖 G7 Автоматизація, комп`ютерно-інтегровані технології та робототехніка", "G7"),
         ("🍞 G13 Харчові технології", "G13"),
         ("⛏️ G16 Гірництво та нафтогазові технології", "G16"),
@@ -39,7 +39,7 @@ async def motivation_main(callback: CallbackQuery):
         [InlineKeyboardButton(text="📂 Приклади за спеціальностями", callback_data="motivation_examples_menu")],
         [InlineKeyboardButton(text="⬅️ Повернутися до документів", callback_data="docs")]
     ])
-    await callback.message.answer(text, reply_markup=kb, parse_mode="HTML")
+    await callback.message.answer(text, reply_markup=kb)
     await callback.answer()
 
 @router.callback_query(F.data == "ml_requirements")
@@ -57,7 +57,7 @@ async def show_requirements(callback: CallbackQuery):
         [InlineKeyboardButton(text="📥 Завантажити інструкцію (PDF)", callback_data="send_req_pdf")],
         [InlineKeyboardButton(text="🔙 Назад", callback_data="motivation_letter")]
     ])
-    await callback.message.answer(text, reply_markup=kb, parse_mode="HTML")
+    await callback.message.answer(text, reply_markup=kb)
     await callback.answer()
 
 @router.callback_query(F.data == "motivation_examples_menu")
@@ -75,14 +75,14 @@ async def send_motivation_file(callback: CallbackQuery):
     await callback.message.delete()
     
     if callback.data == "send_req_pdf":
-        file_path = "assets/pdf/requirements.pdf"
+        file_path = "assets/files/requirements.pdf"
         caption = "📋 <b>Вимоги до написання мотиваційного листа</b>"
         reply_markup = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="🔙 Назад до меню", callback_data="motivation_letter")]
         ])
     else:
         code = callback.data.split("_")[2]
-        file_path = f"assets/pdf/ml_{code}.pdf"
+        file_path = f"assets/files/ml_{code}.pdf"
         caption = f"📄 <b>Приклад листа для спеціальності {code}</b>"
         reply_markup = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="🔙 Назад до списку", callback_data="motivation_examples_menu")]
@@ -92,8 +92,7 @@ async def send_motivation_file(callback: CallbackQuery):
         await callback.message.answer_document(
             document=FSInputFile(file_path),
             caption=caption,
-            reply_markup=reply_markup, 
-            parse_mode="HTML"
+            reply_markup=reply_markup
         )
     else:
         await callback.message.answer(

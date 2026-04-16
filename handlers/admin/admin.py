@@ -27,7 +27,7 @@ async def admin_menu(message: Message):
         [InlineKeyboardButton(text="📢 Створити розсилку", callback_data="start_broadcast")],
         [InlineKeyboardButton(text="📄 Завантажити список", callback_data="download_users")]
     ])
-    await message.answer("🛠 <b>Панель керування</b>", reply_markup=kb, parse_mode="HTML")
+    await message.answer("🛠 <b>Панель керування</b>", reply_markup=kb)
 
 @router.callback_query(F.data == "admin_stats")
 async def stats(callback: CallbackQuery):
@@ -39,8 +39,7 @@ async def stats(callback: CallbackQuery):
 async def broadcast_request(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         "📥 <b>Надішліть або перешліть</b> повідомлення для розсилки.\n"
-        "Це може бути текст, фото, відео або документ.",
-        parse_mode="HTML"
+        "Це може бути текст, фото, відео або документ."
     )
     await state.set_state(BroadcastStates.waiting_for_content)
     await callback.answer()
@@ -65,8 +64,8 @@ async def send_broadcast(callback: CallbackQuery, state: FSMContext, bot: Bot):
             count += 1
         except Exception:
             continue
-            
-    await callback.message.answer(f"✅ Успішно надіслано <b>{count}</b> користувачам.", parse_mode="HTML")
+        
+    await callback.message.answer(f"✅ Успішно надіслано <b>{count}</b> користувачам.")
     await state.clear()
 
 @router.callback_query(F.data == "confirm_no")

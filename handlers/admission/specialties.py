@@ -41,8 +41,7 @@ async def show_specialty(callback: CallbackQuery):
         ])
         await callback.message.edit_text(
             spec["text"],
-            reply_markup=keyboard,
-            parse_mode="HTML"
+            reply_markup=keyboard
         )
     await callback.answer()
 

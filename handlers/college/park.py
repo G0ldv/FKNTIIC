@@ -18,4 +18,4 @@ async def park_handler(callback: CallbackQuery):
         [InlineKeyboardButton(text="🌐 Детальніше на сайті", url="https://www.kntiis.od.ua/uk/dendropark")],
         [InlineKeyboardButton(text="🔙 Назад до вибору", callback_data="open_about_menu")]
     ])
-    await callback.message.edit_text(text, reply_markup=keyboard, parse_mode="HTML")
+    await callback.message.edit_text(text, reply_markup=keyboard)

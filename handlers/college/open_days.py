@@ -26,7 +26,6 @@ async def days_info_handler(callback: CallbackQuery):
         "✅ Детальні консультації щодо вступу та спеціальностей.\n"
         "✅ Відповіді на запитання про навчання та дозвілля.\n\n"
         "📍 <i>Чекаємо на вас за адресою: м. Одеса, вул. Левітана, 46-а (Наукова/Юннатів).</i>",
-        reply_markup=get_days_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_days_keyboard()
     )
     await callback.answer()

@@ -33,8 +33,7 @@ async def socials_handler(message: Message):
     )
     await message.answer(
         text,
-        reply_markup=get_socials_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_socials_keyboard()
     )
     await message.delete()
 

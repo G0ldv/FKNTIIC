@@ -44,8 +44,7 @@ async def contacts_handler(message: Message, state: FSMContext):
     )
     await message.answer(
         text,
-        reply_markup=get_contacts_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_contacts_keyboard()
     )
     await message.delete()
 

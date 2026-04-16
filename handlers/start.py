@@ -28,8 +28,7 @@ async def command_start_handler(message: Message):
     await message.answer_photo(
         photo=photo,
         caption=welcome_text,
-        reply_markup=main_menu,
-        parse_mode="HTML"
+        reply_markup=main_menu
     )
 
 @router.message(Command("restart"))
@@ -38,5 +37,4 @@ async def command_restart_handler(message: Message):
         "🔄 <b>Бот перезапущений!</b>\n"
         "Головне меню активовано.",
         reply_markup=main_menu,
-        parse_mode="HTML"
     )    

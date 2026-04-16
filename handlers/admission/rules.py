@@ -25,8 +25,7 @@ async def rules_main_handler(callback: CallbackQuery):
         "• Перелік вступних випробувань\n"
         "• Порядок зарахування\n\n"
         "Натисніть кнопку нижче, щоб отримати файл:",
-        reply_markup=get_rules_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_rules_keyboard()
     )
     await callback.answer()
 
@@ -39,8 +38,7 @@ async def download_rules_handler(callback: CallbackQuery):
         await callback.message.answer_document(
         document=document,
         caption="📘 <b>Правила прийому 2026</b>\n\nВи можете повернутися назад за допомогою кнопки:",
-        reply_markup=get_after_download_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_after_download_keyboard()
         )
     except Exception as e:
         await callback.message.answer(f"❌ Помилка завантаження: {e}")

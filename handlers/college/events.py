@@ -27,8 +27,7 @@ async def open_events_menu(message: Message, state: FSMContext):
     await message.answer(
         "✨ <b>Заходи нашого коледжу</b>\n\n"
         "Оберіть пункт, щоб дізнатися деталі:",
-        reply_markup=get_events_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_events_keyboard()
     )
     await message.delete()
 
@@ -47,7 +46,6 @@ async def events_menu_callback(callback: CallbackQuery):
     await callback.message.edit_text(
         "✨ <b>Заходи нашого коледжу</b>\n\n"
         "Оберіть пункт, щоб дізнатися деталі:",
-        reply_markup=get_events_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_events_keyboard()
     )
     await callback.answer()

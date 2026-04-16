@@ -29,8 +29,7 @@ async def admission_menu(message: Message, state: FSMContext):
             pass
     await message.answer(
         "🎓 <b>Розділ вступника</b>\n\nОберіть потрібний пункт: 👇",
-        reply_markup=get_admission_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_admission_keyboard()
     )
 
 @router.callback_query(F.data == "admission_menu")
@@ -39,9 +38,9 @@ async def back_to_admission_handler(callback: CallbackQuery):
     kb = get_admission_keyboard()
     if callback.message.document:
         await callback.message.delete()
-        await callback.message.answer(text, reply_markup=kb, parse_mode="HTML")
+        await callback.message.answer(text, reply_markup=kb)
     else:
-        await callback.message.edit_text(text, reply_markup=kb, parse_mode="HTML")
+        await callback.message.edit_text(text, reply_markup=kb)
     await callback.answer()
 
 @router.callback_query(F.data == "back_to_main")

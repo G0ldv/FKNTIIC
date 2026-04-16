@@ -36,8 +36,7 @@ async def prices_main_handler(message: Message, state: FSMContext):
         "💰 <b>Вартість навчання</b>\n\n"
         "Ознайомтеся з офіційним документом, де вказана вартість навчання для кожної спеціальності.\n\n"
         "Натисніть кнопку нижче, щоб отримати файл:",
-        reply_markup=get_prices_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_prices_keyboard()
     )
 
 @router.callback_query(F.data == "download_prices")
@@ -49,8 +48,7 @@ async def download_prices_handler(callback: CallbackQuery):
         await callback.message.answer_document(
             document=document,
             caption="💰 <b>Актуальний прайс-лист ФКНТІІС ОНТУ</b>\n\n",
-            reply_markup=get_after_prices_download_keyboard(),
-            parse_mode="HTML"
+            reply_markup=get_after_prices_download_keyboard()
         )
     except Exception as e:
         await callback.message.answer(
@@ -65,8 +63,7 @@ async def back_to_prices_main(callback: CallbackQuery):
         "💰 <b>Вартість навчання</b>\n\n"
         "Ознайомтеся з офіційним документом, де вказана вартість навчання для кожної спеціальності.\n\n"
         "Натисніть кнопку нижче, щоб отримати файл:",
-        reply_markup=get_prices_keyboard(),
-        parse_mode="HTML"
+        reply_markup=get_prices_keyboard()
     )
     await callback.answer()
 
