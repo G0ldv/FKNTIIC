@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
 from database import init_db
 from handlers import router as start_router
 from handlers.admission import router as admission_router
@@ -17,7 +16,7 @@ TOKEN = getenv("BOT_TOKEN")
 async def main():
     await init_db() 
     
-    bot = Bot(token=TOKEN, default_bot_properties=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot = Bot(token=TOKEN, default_bot_properties=DefaultBotProperties(parse_mode="HTML"))
     dp = Dispatcher()
 
     dp.include_router(start_router)

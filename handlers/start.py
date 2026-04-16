@@ -36,5 +36,5 @@ async def command_restart_handler(message: Message):
     await message.answer(
         "🔄 <b>Бот перезапущений!</b>\n"
         "Головне меню активовано.",
-        reply_markup=main_menu,
+        reply_markup=main_menu
     )    
