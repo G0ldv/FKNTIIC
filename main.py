@@ -33,7 +33,7 @@ async def main():
 
     print("Бот запущений і готовий до роботи...")
 
-    await dp.start_polling(bot)
+    await dp.start_polling(bot, handle_as_tasks=False)
 
 if __name__ == "__main__":
     try:
