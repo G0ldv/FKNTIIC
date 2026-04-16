@@ -13,7 +13,7 @@ from handlers.college import router as college_router
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
-
+ 
 async def main():
     await init_db() 
     
