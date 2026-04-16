@@ -6,6 +6,7 @@ from .specialties import router as spec_router
 from .price import router as price_router
 from .contacts import router as contacts_router
 from .prep_courses import router as prep_courses_router
+from .motivation import router as motivation_router
 
 router = Router()
 
@@ -16,3 +17,4 @@ router.include_router(spec_router)
 router.include_router(price_router)
 router.include_router(contacts_router)
 router.include_router(prep_courses_router)
+router.include_router(motivation_router)

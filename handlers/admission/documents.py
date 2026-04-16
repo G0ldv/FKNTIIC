@@ -9,6 +9,7 @@ def get_docs_main_keyboard():
         [InlineKeyboardButton(text="🏫 Після 11 класу", callback_data="docs_11cl")],
         [InlineKeyboardButton(text="🛠 На базі диплома ПТУ", callback_data="docs_ptu")],
         [InlineKeyboardButton(text="🎗️ Пільгові категорії", callback_data="docs_benefits")],
+        [InlineKeyboardButton(text="📄 Мотиваційний лист", callback_data="motivation_letter")],
         [InlineKeyboardButton(text="🔙 Повернутися в розділ вступника", callback_data="admission_menu")]
     ])
     return keyboard
@@ -37,7 +38,8 @@ async def docs_detail_handler(callback: CallbackQuery):
         "• Паспорт (ID-картка + витяг про реєстрацію)\n"
         "• ІПН (ідентифікаційний код)\n"
         "• 4 кольорові фото (3х4)\n"
-        "• Резерв+ pdf-файл (для хлопців)"
+        "• Резерв+ pdf-файл (для хлопців)\n"
+        "• Мотиваційний лист (подається в ел. кабінеті)"
     )
     parent_docs = (
         "\n\n👤 <b>Для неповнолітніх (документи одного з батьків):</b>\n"
