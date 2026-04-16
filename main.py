@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from database import init_db
 from handlers import router as start_router
 from handlers.admission import router as admission_router
@@ -16,7 +17,9 @@ TOKEN = getenv("BOT_TOKEN")
 async def main():
     await init_db() 
     
-    bot = Bot(token=TOKEN, default_bot_properties=DefaultBotProperties(parse_mode="HTML"))
+    default_properties = DefaultBotProperties(parse_mode=ParseMode.HTML)
+
+    bot = Bot(token=TOKEN, default_bot_properties=default_properties)
     dp = Dispatcher()
 
     dp.include_router(start_router)
@@ -24,6 +27,7 @@ async def main():
     dp.include_router(admin_router)
     dp.include_router(college_router)
 
+    await bot.delete_my_commands()
     await bot.set_my_commands([
         BotCommand(command="start", description="Запуск бота 🚀"),
         BotCommand(command="restart", description="Перезапустити бота 🔄"),
@@ -32,7 +36,7 @@ async def main():
 
     print("Бот запущений і готовий до роботи...")
 
-    await dp.start_polling(bot, handle_as_tasks=False)
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
     try:
