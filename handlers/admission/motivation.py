@@ -81,11 +81,11 @@ async def send_motivation_file(callback: CallbackQuery):
     await callback.message.delete()
     
     if callback.data == "send_req_pdf":
-        file_path = "assets/pdf/requirements.pdf"
+        file_path = "assets/files/requirements.pdf"
         caption = "📋 <b>Вимоги до написання мотиваційного листа</b>"
     else:
         code = callback.data.split("_")[2]
-        file_path = f"assets/pdf/ml_{code}.pdf"
+        file_path = f"assets/files/ml_{code}.pdf"
         caption = f"📄 <b>Приклад листа для спеціальності {code}</b>"
 
     if os.path.exists(file_path):
