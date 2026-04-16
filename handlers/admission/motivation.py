@@ -27,12 +27,6 @@ def get_motivation_examples_keyboard():
     builder.row(InlineKeyboardButton(text="🔙 Назад до меню", callback_data="motivation_letter"))
     return builder.as_markup()
 
-def get_after_file_download_keyboard():
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🔙 Назад до списку", callback_data="motivation_examples_menu")]
-    ])
-    return keyboard
-
 @router.callback_query(F.data == "motivation_letter")
 async def motivation_main(callback: CallbackQuery):
     await callback.message.delete() 
@@ -81,23 +75,29 @@ async def send_motivation_file(callback: CallbackQuery):
     await callback.message.delete()
     
     if callback.data == "send_req_pdf":
-        file_path = "assets/files/requirements.pdf"
+        file_path = "assets/pdf/requirements.pdf"
         caption = "📋 <b>Вимоги до написання мотиваційного листа</b>"
+        reply_markup = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="🔙 Назад до меню", callback_data="motivation_letter")]
+        ])
     else:
         code = callback.data.split("_")[2]
-        file_path = f"assets/files/ml_{code}.pdf"
+        file_path = f"assets/pdf/ml_{code}.pdf"
         caption = f"📄 <b>Приклад листа для спеціальності {code}</b>"
+        reply_markup = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="🔙 Назад до списку", callback_data="motivation_examples_menu")]
+        ])
 
     if os.path.exists(file_path):
         await callback.message.answer_document(
             document=FSInputFile(file_path),
             caption=caption,
-            reply_markup=get_after_file_download_keyboard(),
+            reply_markup=reply_markup, 
             parse_mode="HTML"
         )
     else:
         await callback.message.answer(
             "❌ Файл тимчасово відсутній на сервері.",
-            reply_markup=get_after_file_download_keyboard()
+            reply_markup=reply_markup
         )
     await callback.answer()
