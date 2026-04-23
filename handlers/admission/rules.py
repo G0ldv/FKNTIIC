@@ -41,5 +41,5 @@ async def download_rules_handler(callback: CallbackQuery):
         reply_markup=get_after_download_keyboard()
         )
     except Exception as e:
-        await callback.message.answer(f"❌ Помилка завантаження: {e}")
+        await callback.message.answer(f"❌ Інформація оновлюється: {e}")
     await callback.answer()    
