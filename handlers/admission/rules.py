@@ -1,5 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
+from database import log_section_click
 
 router = Router()
 
@@ -18,6 +19,7 @@ def get_after_download_keyboard():
 
 @router.callback_query(F.data == "rules")
 async def rules_main_handler(callback: CallbackQuery):
+    await log_section_click("📘 Правила вступу")
     await callback.message.edit_text(
         "📘 <b>Правила прийому до коледжу</b>\n\n"
         "У цьому документі ви знайдете детальну інформацію про:\n"

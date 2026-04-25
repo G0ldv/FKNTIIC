@@ -1,10 +1,12 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from database import log_section_click
 
 router = Router()
 
 @router.callback_query(F.data == "history_more")
 async def history_handler(callback: CallbackQuery):
+    await log_section_click("📜 Історія та заснування")
     text = (
         "📜 <b>Історія заснування та становлення</b>\n\n"
         "Наш коледж розпочав свій шлях ще у <b>1944 році</b>. Уявіть, Одеса тільки-но була звільнена, "

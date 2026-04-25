@@ -1,10 +1,12 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from database import log_section_click
 
 router = Router()
 
 @router.callback_query(F.data == "park_more")
 async def park_handler(callback: CallbackQuery):
+    await log_section_click("🌳 Дендропарк «Студентський»")
     text = (
         "🌳 <b>Дендропарк «Студентський» — наша зелена перлина</b>\n\n"
         "Чи багато навчальних закладів можуть похвалитися власним заповідником? А ми можемо! 😎\n\n"

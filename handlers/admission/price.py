@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
 from keyboards.main_menu import main_menu, remove_menu
+from database import log_section_click
 
 router = Router()
 
@@ -21,6 +22,7 @@ def get_after_prices_download_keyboard():
 
 @router.message(F.text == "💰 Вартість навчання")
 async def prices_main_handler(message: Message, state: FSMContext):
+    await log_section_click("💰 Вартість навчання")
     await message.delete()
     temp_msg = await message.answer("Завантажую розділ цін...", reply_markup=remove_menu)
     await temp_msg.delete()

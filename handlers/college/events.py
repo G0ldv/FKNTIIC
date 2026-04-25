@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from keyboards.main_menu import main_menu
+from database import log_section_click
 
 router = Router()
 
@@ -14,6 +15,7 @@ def get_events_keyboard():
 
 @router.message(F.text == "📅 Заходи")
 async def open_events_menu(message: Message, state: FSMContext):
+    await log_section_click("📅 Заходи")
     temp_msg = await message.answer("Завантажую...", reply_markup=ReplyKeyboardRemove())
     await temp_msg.delete()
     data = await state.get_data()

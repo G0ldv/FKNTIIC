@@ -1,10 +1,12 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from database import log_section_click
 
 router = Router()
 
 @router.callback_query(F.data == "governance_more")
 async def governance_handler(callback: CallbackQuery):
+    await log_section_click("🤝 Студентське самоврядування")
     text = (
         "🤝 <b>Студентське самоврядування: твій голос має значення!</b>\n\n"
         "У нашому коледжі студенти — це не просто слухачі, а реальна сила. "

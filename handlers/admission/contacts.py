@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from keyboards.main_menu import main_menu
+from database import log_section_click
 
 router = Router()
 
@@ -15,6 +16,7 @@ def get_contacts_keyboard():
 
 @router.message(F.text == "📍 Локація та контакти")
 async def contacts_handler(message: Message, state: FSMContext):
+    await log_section_click("📍 Локація та контакти")
     temp_msg = await message.answer("Завантажую контакти...", reply_markup=ReplyKeyboardRemove())
     await temp_msg.delete()
     data = await state.get_data()

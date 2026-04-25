@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 import os
+from database import log_section_click
 
 router = Router()
 
@@ -29,6 +30,7 @@ def get_motivation_examples_keyboard():
 
 @router.callback_query(F.data == "motivation_letter")
 async def motivation_main(callback: CallbackQuery):
+    await log_section_click("📄 Мотиваційний лист")
     await callback.message.delete() 
     text = (
         "<b>📝 Мотиваційний лист</b>\n\n"

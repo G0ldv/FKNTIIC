@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from keyboards.main_menu import main_menu, remove_menu
+from database import log_section_click
 
 router = Router()
 
@@ -15,6 +16,7 @@ def get_specialties_keyboard():
 
 @router.message(F.text == "📄 Спеціальності")
 async def show_specialties(message: Message, state: FSMContext):
+    await log_section_click("📄 Спеціальності")
     await message.delete()
     temp_msg = await message.answer("Завантажую розділ спеціальностей...", reply_markup=remove_menu)
     await temp_msg.delete()

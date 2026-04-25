@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from keyboards.main_menu import main_menu
+from database import log_section_click
 
 router = Router()
 
@@ -16,6 +17,7 @@ def get_about_menu_keyboard():
 
 @router.message(F.text == "🏫 Про коледж")
 async def about_main_handler(message: Message, state: FSMContext):
+    await log_section_click("🏫 Про коледж")
     await message.delete()
     data = await state.get_data()
     last_msg_id = data.get("last_menu_msg_id")

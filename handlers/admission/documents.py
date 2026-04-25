@@ -1,5 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from database import log_section_click
 
 router = Router()
 
@@ -22,6 +23,7 @@ def get_back_to_docs_keyboard():
 
 @router.callback_query(F.data == "docs")
 async def docs_main_handler(callback: CallbackQuery):
+    await log_section_click("📑 Необхідні документи")
     await callback.message.edit_text(
         "📑 <b>Перелік документів для вступу</b>\n\n"
         "Оберіть вашу категорію, щоб побачити повний список необхідних документів:",

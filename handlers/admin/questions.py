@@ -3,6 +3,7 @@ from aiogram import Router, F
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from database import log_section_click
 
 router = Router()
 
@@ -13,6 +14,7 @@ class QuestionState(StatesGroup):
 
 @router.message(F.text == "❓ Поставити запитання")
 async def ask_question_start(message: Message, state: FSMContext):
+    await log_section_click("❓ Поставити запитання")
     await message.delete()
     await message.answer(
         "✍️ Напишіть своє запитання одним повідомленням.\n\n"

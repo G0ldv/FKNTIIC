@@ -1,5 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from database import log_section_click
 
 router = Router()
 
@@ -12,6 +13,7 @@ def get_days_keyboard():
 
 @router.callback_query(F.data == "days")
 async def days_info_handler(callback: CallbackQuery):
+    await log_section_click("📅 Дні відкритих дверей")
     await callback.message.edit_text(
         "📅 <b>Дні відкритих дверей у ФКНТІІС ОНТУ</b>\n\n"
         "Запрошуємо вас особисто познайомитися з коледжем та обрати майбутню професію!\n\n"

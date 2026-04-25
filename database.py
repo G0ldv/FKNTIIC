@@ -1,9 +1,9 @@
-import os
+from os import getenv
 import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = getenv("DATABASE_URL")
 
 _pool = None
 
@@ -24,6 +24,26 @@ async def init_db():
                 phone TEXT
             )
         ''')
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS section_stats (
+                section_name TEXT PRIMARY KEY,
+                click_count INTEGER DEFAULT 0
+            )
+        ''')
+
+async def log_section_click(section_name: str):
+    pool = await get_pool()
+    await pool.execute('''
+        INSERT INTO section_stats (section_name, click_count)
+        VALUES ($1, 1)
+        ON CONFLICT (section_name) 
+        DO UPDATE SET click_count = section_stats.click_count + 1
+    ''', section_name)
+
+async def get_sections_stats():
+    pool = await get_pool()
+    rows = await pool.fetch('SELECT section_name, click_count FROM section_stats ORDER BY click_count DESC')
+    return rows
 
 async def add_user(user_id, full_name=None, username=None):
     pool = await get_pool()

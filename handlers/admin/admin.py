@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 import io
 from aiogram.types import BufferedInputFile
-from database import get_all_users_full, get_users_count, get_all_users
+from database import get_all_users_full, get_users_count, get_all_users, get_sections_stats
 
 router = Router()
 ADMIN_IDS = [1779431249]
@@ -32,7 +32,17 @@ async def admin_menu(message: Message):
 @router.callback_query(F.data == "admin_stats")
 async def stats(callback: CallbackQuery):
     count = await get_users_count()
-    await callback.message.answer(f"👥 Всього користувачів: {count}")
+    sections = await get_sections_stats()
+    msg = f"👥 <b>Загальна кількість користувачів:</b> {count}\n\n"
+    if sections:
+        msg += "📊 <b>Популярність розділів:</b>\n"
+        msg += "━━━━━━━━━━━━━━━━━━\n"
+        for i, row in enumerate(sections, 1):
+            msg += f"{i}. {row[0]}: <b>{row[1]}</b>\n"
+    else:
+        msg += "ℹ️ Дані про активність поки що відсутні."
+
+    await callback.message.answer(msg)
     await callback.answer()
 
 @router.callback_query(F.data == "start_broadcast")
