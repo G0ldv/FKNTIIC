@@ -10,7 +10,7 @@ def get_docs_main_keyboard():
         [InlineKeyboardButton(text="🏫 Після 11 класу", callback_data="docs_11cl")],
         [InlineKeyboardButton(text="🛠 На базі диплома ПТУ", callback_data="docs_ptu")],
         [InlineKeyboardButton(text="🎗️ Пільгові категорії", callback_data="docs_benefits")],
-        [InlineKeyboardButton(text="📄 Мотиваційний лист", callback_data="motivation_letter")],
+        # [InlineKeyboardButton(text="📄 Мотиваційний лист", callback_data="motivation_letter")],
         [InlineKeyboardButton(text="🔙 Повернутися в розділ вступника", callback_data="admission_menu")]
     ])
     return keyboard
@@ -39,8 +39,8 @@ async def docs_detail_handler(callback: CallbackQuery):
         "• Паспорт (ID-картка + витяг про реєстрацію)\n"
         "• ІПН (ідентифікаційний код)\n"
         "• 4 кольорові фото (3х4)\n"
-        "• Резерв+ pdf-файл (для хлопців)\n"
-        "• Мотиваційний лист (подається в ел. кабінеті)"
+        "• Резерв+ pdf-файл (для хлопців)"
+        # "• Мотиваційний лист (подається в ел. кабінеті)"
     )
     parent_docs = (
         "\n\n👤 <b>Для неповнолітніх (документи одного з батьків):</b>\n"
@@ -62,8 +62,8 @@ async def docs_detail_handler(callback: CallbackQuery):
         text = (
             "🏫 <b>Для вступників на базі 11 класів:</b>\n\n"
             f"{common_items}\n"
-            "• Свідоцтво про повну середню освіту\n"
-            "• Додаток до свідоцтва\n"
+            "• Атестат про повну загальну середню освіту\n"
+            "• Додаток до атестату\n"
             "• Сертифікат НМТ або ЗНО (за наявності)\n"
             f"{parent_docs}"
         )
@@ -72,7 +72,7 @@ async def docs_detail_handler(callback: CallbackQuery):
             "🛠 <b>На базі диплома ПТУ:</b>\n\n"
             f"{common_items}\n"
             "• Диплом кваліфікованого робітника\n"
-            "• Додаток до диплома\n"
+            "• Додаток до диплому\n"
             "• Сертифікат НМТ/ЗНО (за наявності)\n\n"
             "<i>*Можливий вступ на 2-й або 3-й курс.</i>\n"
             f"{parent_docs}"
