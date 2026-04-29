@@ -34,7 +34,7 @@ async def main():
     await bot.set_my_commands([
         BotCommand(command="start", description="Запуск бота 🚀"),
         BotCommand(command="restart", description="Перезапустити бота 🔄"),
-        BotCommand(command="admin", description="Панель адміна")
+        BotCommand(command="menu", description="Головне меню 🏠")
     ])
 
     print("Бот запущений і готовий до роботи...")

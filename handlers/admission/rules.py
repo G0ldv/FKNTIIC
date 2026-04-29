@@ -7,13 +7,13 @@ router = Router()
 def get_rules_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="📥 Завантажити документ (PDF)", callback_data="download_rules")],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="admission_menu")]
+        [InlineKeyboardButton(text="🔙 Повернутися в розділ вступника", callback_data="admission_menu")]
     ])
     return keyboard
 
 def get_after_download_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🔙 Назад до меню вступу", callback_data="admission_menu")]
+        [InlineKeyboardButton(text="🔙 Повернутися в розділ вступника", callback_data="admission_menu")]
     ])
     return keyboard
 

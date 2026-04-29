@@ -9,20 +9,22 @@ router = Router()
 def get_admission_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="📘 Правила вступу", callback_data="rules")],
+        [InlineKeyboardButton(text="📅 Терміни вступу", callback_data="deadlines")],
         [InlineKeyboardButton(text="📑 Необхідні документи", callback_data="docs")],
         [InlineKeyboardButton(text="🎓 Підготовчі курси", callback_data="prep_courses")],
         [InlineKeyboardButton(text="🔙 Повернутися до головного меню", callback_data="back_to_main")],
     ])
     return keyboard
 
-@router.message(F.text == "🎓 Вступ")
+@router.message(F.text == "🎓 Вступнику")
 async def admission_menu(message: Message, state: FSMContext):
+    data = await state.get_data()
+    last_msg_id = data.get("last_menu_msg_id")
+    await state.clear()
     await log_section_click("🎓 Вступ")
     await message.delete()
     temp_msg = await message.answer("Завантажую розділ вступу...", reply_markup=remove_menu)
     await temp_msg.delete()
-    data = await state.get_data()
-    last_msg_id = data.get("last_menu_msg_id")
     if last_msg_id:
         try:
             await message.chat.delete_message(last_msg_id)
@@ -35,14 +37,11 @@ async def admission_menu(message: Message, state: FSMContext):
     )
 
 @router.callback_query(F.data == "admission_menu")
-async def back_to_admission_handler(callback: CallbackQuery):
+async def back_to_admission_handler(callback: CallbackQuery, state: FSMContext):
     text = "🎓 <b>Розділ вступника</b>\n\nОберіть потрібний пункт: 👇"
     kb = get_admission_keyboard()
-    if callback.message.document:
-        await callback.message.delete()
-        await callback.message.answer(text, reply_markup=kb)
-    else:
-        await callback.message.edit_text(text, reply_markup=kb)
+    await callback.message.delete()
+    await callback.message.answer(text, reply_markup=kb)
     await callback.answer()
 
 @router.callback_query(F.data == "back_to_main")

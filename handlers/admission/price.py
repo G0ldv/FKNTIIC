@@ -22,12 +22,13 @@ def get_after_prices_download_keyboard():
 
 @router.message(F.text == "💰 Вартість навчання")
 async def prices_main_handler(message: Message, state: FSMContext):
+    data = await state.get_data()
+    last_msg_id = data.get("last_menu_msg_id")
+    await state.clear()
     await log_section_click("💰 Вартість навчання")
     await message.delete()
     temp_msg = await message.answer("Завантажую розділ цін...", reply_markup=remove_menu)
     await temp_msg.delete()
-    data = await state.get_data()
-    last_msg_id = data.get("last_menu_msg_id")
     if last_msg_id:
         try:
             await message.chat.delete_message(last_msg_id)

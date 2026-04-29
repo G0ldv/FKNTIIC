@@ -15,11 +15,12 @@ def get_events_keyboard():
 
 @router.message(F.text == "📅 Заходи")
 async def open_events_menu(message: Message, state: FSMContext):
+    data = await state.get_data()
+    last_msg_id = data.get("last_menu_msg_id")
+    await state.clear()
     await log_section_click("📅 Заходи")
     temp_msg = await message.answer("Завантажую...", reply_markup=ReplyKeyboardRemove())
     await temp_msg.delete()
-    data = await state.get_data()
-    last_msg_id = data.get("last_menu_msg_id")
     if last_msg_id:
         try:
             await message.chat.delete_message(last_msg_id)

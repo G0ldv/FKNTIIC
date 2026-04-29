@@ -16,12 +16,13 @@ def get_specialties_keyboard():
 
 @router.message(F.text == "📄 Спеціальності")
 async def show_specialties(message: Message, state: FSMContext):
+    data = await state.get_data()
+    last_msg_id = data.get("last_menu_msg_id")
+    await state.clear()
     await log_section_click("📄 Спеціальності")
     await message.delete()
     temp_msg = await message.answer("Завантажую розділ спеціальностей...", reply_markup=remove_menu)
     await temp_msg.delete()
-    data = await state.get_data()
-    last_msg_id = data.get("last_menu_msg_id")
     if last_msg_id:
         try:
             await message.chat.delete_message(last_msg_id)

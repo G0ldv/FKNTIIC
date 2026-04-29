@@ -7,7 +7,7 @@ router = Router()
 def get_prep_courses_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="✍️ Записатися на курси", callback_data="enroll_prep")],
-        [InlineKeyboardButton(text="🔙 Повернутися до вступу", callback_data="admission_menu")],
+        [InlineKeyboardButton(text="🔙 Повернутися в розділ вступника", callback_data="admission_menu")],
     ])
     return keyboard
 

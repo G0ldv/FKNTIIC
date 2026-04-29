@@ -1,5 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
+from aiogram.fsm.context import FSMContext
 from keyboards.main_menu import main_menu
 from database import log_section_click
 
@@ -20,7 +21,8 @@ def get_socials_keyboard():
     return keyboard
 
 @router.message(F.text == "📱 Соцмережі")
-async def socials_handler(message: Message):
+async def socials_handler(message: Message, state: FSMContext):
+    await state.clear()
     await log_section_click("📱 Соцмережі")
     temp_msg = await message.answer("Відкриваю соцмережі...", reply_markup=ReplyKeyboardRemove())
     await temp_msg.delete()

@@ -16,11 +16,13 @@ def get_contacts_keyboard():
 
 @router.message(F.text == "📍 Локація та контакти")
 async def contacts_handler(message: Message, state: FSMContext):
-    await log_section_click("📍 Локація та контакти")
-    temp_msg = await message.answer("Завантажую контакти...", reply_markup=ReplyKeyboardRemove())
-    await temp_msg.delete()
     data = await state.get_data()
     last_msg_id = data.get("last_menu_msg_id")
+    await state.clear()
+    await log_section_click("📍 Локація та контакти")
+    await message.delete()
+    temp_msg = await message.answer("Завантажую контакти...", reply_markup=ReplyKeyboardRemove())
+    await temp_msg.delete()
     if last_msg_id:
         try:
             await message.chat.delete_message(last_msg_id)
@@ -37,8 +39,8 @@ async def contacts_handler(message: Message, state: FSMContext):
         "<code>Пт:    09:00 – 15:00</code>\n"
         "<i>Сб–Нд: Вихідні</i>\n\n"
         "📞 <b>Приймальна комісія:</b>\n"
-        "+380671030577 (Telegram, Viber)\n\n"
-        # "📧 <i>vstup.kntiis@gmail.com</i>\n\n"
+        "+380671030577 (Telegram, Viber)\n"
+        "📧 <i>prijmalnakomisia2@gmail.com</i>\n\n"
         "👤 <b>Приймальна директора:</b>\n"
         "+380487492932\n"
         "📧 <i>kntiis.od@gmail.com</i>\n\n"
@@ -48,7 +50,6 @@ async def contacts_handler(message: Message, state: FSMContext):
         text,
         reply_markup=get_contacts_keyboard()
     )
-    await message.delete()
 
 @router.callback_query(F.data == "back_to_main")
 async def back_to_main_handler(callback: CallbackQuery, state: FSMContext):
