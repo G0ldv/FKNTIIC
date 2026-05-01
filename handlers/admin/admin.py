@@ -67,6 +67,16 @@ async def ask_confirm(message: Message, state: FSMContext):
     await message.reply("☝️ Ви впевнені?", reply_markup=confirm_kb())
     await state.set_state(BroadcastStates.confirm_broadcast)
 
+@router.callback_query(F.data == "confirm_no", BroadcastStates.confirm_broadcast)
+async def cancel_broadcast(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(None)
+    await replace_nav(
+        callback.message, state, 
+        text="❌ <b>Розсилку скасовано.</b>\n\n🛠 <b>Панель керування</b>", 
+        reply_markup=admin_kb()
+    )
+    await callback.answer("Скасовано")
+
 @router.callback_query(F.data == "confirm_yes", BroadcastStates.confirm_broadcast)
 async def send_broadcast(callback: CallbackQuery, state: FSMContext, bot: Bot):
     data = await state.get_data()
