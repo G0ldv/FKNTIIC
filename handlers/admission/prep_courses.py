@@ -1,6 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.fsm.context import FSMContext
 from database import log_section_click
+from utils.navigation import edit_nav
 
 router = Router()
 
@@ -19,7 +21,7 @@ def get_enroll_prep_keyboard():
     return keyboard
 
 @router.callback_query(F.data == "prep_courses")
-async def prep_courses_handler(callback: CallbackQuery):
+async def prep_courses_handler(callback: CallbackQuery, state: FSMContext):
     await log_section_click("🎓 Підготовчі курси")
     text = (
         "🎓 <b>Твій тест-драйв студентського життя!</b>\n\n"
@@ -35,18 +37,18 @@ async def prep_courses_handler(callback: CallbackQuery):
         "🤝 <b>Це твій шанс знайти перших друзів у коледжі!</b>"
     )
 
-    await callback.message.edit_text(
-        text,
-        reply_markup=get_prep_courses_keyboard()
+    await edit_nav( callback.message, state, text=text, reply_markup=get_prep_courses_keyboard()
     )
     await callback.answer()
 
 @router.callback_query(F.data == "enroll_prep")
-async def enroll_prep_handler(callback: CallbackQuery):
-    await callback.message.edit_text(
+async def enroll_prep_handler(callback: CallbackQuery, state: FSMContext):
+    text = (
         "📝 <b>Запис на курси</b>\n\n"
         "Для реєстрації, будь ласка, зверніться до приймальної комісії або заповніть форму нижче.\n\n"
-        "📞 Контакти: +380671030577 (Telegram, Viber)",
-        reply_markup=get_enroll_prep_keyboard()
+        "📞 Контакти: +380671030577 (Telegram, Viber)"
+    )
+    await edit_nav(
+        callback.message, state, text=text, reply_markup=get_enroll_prep_keyboard()
     )
     await callback.answer()

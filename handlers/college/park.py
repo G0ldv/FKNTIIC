@@ -1,11 +1,20 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.fsm.context import FSMContext
 from database import log_section_click
+from utils.navigation import edit_nav
 
 router = Router()
 
+def get_park_more_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🌐 Детальніше на сайті", url="https://www.kntiis.od.ua/uk/dendropark")],
+        [InlineKeyboardButton(text="🔙 Назад до вибору", callback_data="open_about_menu")]
+    ])
+    return keyboard
+
 @router.callback_query(F.data == "park_more")
-async def park_handler(callback: CallbackQuery):
+async def park_handler(callback: CallbackQuery, state: FSMContext):
     await log_section_click("🌳 Дендропарк «Студентський»")
     text = (
         "🌳 <b>Дендропарк «Студентський» — наша зелена перлина</b>\n\n"
@@ -16,8 +25,5 @@ async def park_handler(callback: CallbackQuery):
         "🦜 <b>Це жива екосистема:</b> Студенти часто проводять тут час між парами. Парк має статус "
         "заповідної території, тому повітря тут — як у лісі, хоча ми знаходимося в самому серці Одеси (вул. Левітана)."
     )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🌐 Детальніше на сайті", url="https://www.kntiis.od.ua/uk/dendropark")],
-        [InlineKeyboardButton(text="🔙 Назад до вибору", callback_data="open_about_menu")]
-    ])
-    await callback.message.edit_text(text, reply_markup=keyboard)
+    await edit_nav(callback.message, state, text=text, reply_markup=get_park_more_keyboard())
+    await callback.answer()

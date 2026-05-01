@@ -1,8 +1,8 @@
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
-from keyboards.main_menu import main_menu
 from database import log_section_click
+from utils.navigation import replace_nav
 
 router = Router()
 
@@ -22,30 +22,11 @@ def get_socials_keyboard():
 
 @router.message(F.text == "📱 Соцмережі")
 async def socials_handler(message: Message, state: FSMContext):
-    await state.clear()
+    await state.set_state(None)
     await log_section_click("📱 Соцмережі")
-    temp_msg = await message.answer("Відкриваю соцмережі...", reply_markup=ReplyKeyboardRemove())
-    await temp_msg.delete()
-    try:
-        await message.chat.delete_message(message.message_id - 1)
-    except:
-        pass
     text = (
         "🔗 <b>Ми у соціальних мережах</b>\n\n"
         "Підписуйтесь, щоб бути в курсі всіх новин, подій та цікавинок із життя нашого коледжу! 🤩\n\n"
         "Обирайте зручну платформу нижче 👇"
     )
-    await message.answer(
-        text,
-        reply_markup=get_socials_keyboard()
-    )
-    await message.delete()
-
-@router.callback_query(F.data == "back_to_main")
-async def back_to_main_handler(callback: CallbackQuery):
-    await callback.message.delete()
-    await callback.message.answer(
-        "Ви повернулися до головного меню:",
-        reply_markup=main_menu
-    )
-    await callback.answer()
+    await replace_nav(message, state, text=text, reply_markup=get_socials_keyboard())

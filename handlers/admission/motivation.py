@@ -1,10 +1,39 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 import os
 from database import log_section_click
+from utils.navigation import replace_nav, edit_nav
 
 router = Router()
+
+def get_motivation_letter_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📋 Вимоги до оформлення", callback_data="ml_requirements")],
+        [InlineKeyboardButton(text="📂 Приклади за спеціальностями", callback_data="motivation_examples_menu")],
+        [InlineKeyboardButton(text="⬅️ Повернутися до документів", callback_data="docs")]
+    ])
+    return keyboard
+
+def get_motivation_pdf_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📥 Завантажити інструкцію (PDF)", callback_data="send_req_pdf")],
+        [InlineKeyboardButton(text="🔙 Назад", callback_data="motivation_letter")]
+    ])
+    return keyboard
+
+def get_motivation_letter_menu_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🔙 Назад до меню", callback_data="motivation_letter")]
+    ])
+    return keyboard
+
+def get_motivation_example_menu_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🔙 Назад до списку", callback_data="motivation_examples_menu")]
+    ])
+    return keyboard
 
 def get_motivation_examples_keyboard():
     builder = InlineKeyboardBuilder()
@@ -29,24 +58,19 @@ def get_motivation_examples_keyboard():
     return builder.as_markup()
 
 @router.callback_query(F.data == "motivation_letter")
-async def motivation_main(callback: CallbackQuery):
-    await log_section_click("📄 Мотиваційний лист")
-    await callback.message.delete() 
+async def motivation_main(callback: CallbackQuery, state: FSMContext):
+    await log_section_click("📄 Мотиваційний лист") 
     text = (
         "<b>📝 Мотиваційний лист</b>\n\n"
         "Оберіть потрібний розділ. Ви можете ознайомитися з вимогами або завантажити готовий приклад для своєї спеціальності."
     )
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📋 Вимоги до оформлення", callback_data="ml_requirements")],
-        [InlineKeyboardButton(text="📂 Приклади за спеціальностями", callback_data="motivation_examples_menu")],
-        [InlineKeyboardButton(text="⬅️ Повернутися до документів", callback_data="docs")]
-    ])
-    await callback.message.answer(text, reply_markup=kb)
+    await edit_nav(
+        callback.message, state, text=text, reply_markup=get_motivation_letter_keyboard()
+    )
     await callback.answer()
 
 @router.callback_query(F.data == "ml_requirements")
-async def show_requirements(callback: CallbackQuery):
-    await callback.message.delete()
+async def show_requirements(callback: CallbackQuery, state: FSMContext):
     text = (
         "<b>📋 Основні вимоги до листа:</b>\n\n"
         "• Обов'язкова наявність 'шапки' (ПІБ, адреса, контакти).\n"
@@ -55,50 +79,42 @@ async def show_requirements(callback: CallbackQuery):
         "• Опис особистих якостей та прагнень.\n"
         "• Відсутність помилок та офіційний стиль."
     )
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📥 Завантажити інструкцію (PDF)", callback_data="send_req_pdf")],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="motivation_letter")]
-    ])
-    await callback.message.answer(text, reply_markup=kb)
+    await edit_nav(
+        callback.message, state, text=text, reply_markup=get_motivation_pdf_keyboard()
+    )
     await callback.answer()
 
 @router.callback_query(F.data == "motivation_examples_menu")
-async def list_examples(callback: CallbackQuery):
-    await callback.message.delete()
-    await callback.message.answer(
-        "Оберіть спеціальність, щоб отримати відповідний приклад у форматі PDF:",
-        reply_markup=get_motivation_examples_keyboard()
+async def list_examples(callback: CallbackQuery, state: FSMContext):
+    text = (
+        "Оберіть спеціальність, щоб отримати відповідний приклад у форматі PDF:"
+    )
+    await edit_nav(
+        callback.message, state, text=text, reply_markup=get_motivation_examples_keyboard()
     )
     await callback.answer()
 
 @router.callback_query(F.data.startswith("get_ml_") | (F.data == "send_req_pdf"))
-async def send_motivation_file(callback: CallbackQuery):
-    await callback.answer("Надсилаю документ...")
-    await callback.message.delete()
-    
+async def send_motivation_file(callback: CallbackQuery, state: FSMContext):
     if callback.data == "send_req_pdf":
         file_path = "assets/files/requirements.pdf"
         caption = "📋 <b>Вимоги до написання мотиваційного листа</b>"
-        reply_markup = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🔙 Назад до меню", callback_data="motivation_letter")]
-        ])
+        kb = get_motivation_letter_menu_keyboard() 
     else:
         code = callback.data.split("_")[2]
         file_path = f"assets/files/ml_{code}.pdf"
         caption = f"📄 <b>Приклад листа для спеціальності {code}</b>"
-        reply_markup = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🔙 Назад до списку", callback_data="motivation_examples_menu")]
-        ])
-
+        kb = get_motivation_example_menu_keyboard()
     if os.path.exists(file_path):
-        await callback.message.answer_document(
+        sent = await callback.message.answer_document(
             document=FSInputFile(file_path),
             caption=caption,
-            reply_markup=reply_markup
+            reply_markup=kb
         )
     else:
-        await callback.message.answer(
-            "❌ Файл тимчасово відсутній на сервері.",
-            reply_markup=reply_markup
+        await replace_nav(
+            callback.message, state,
+            text="❌ Файл тимчасово відсутній на сервері.",
+            reply_markup=kb
         )
     await callback.answer()

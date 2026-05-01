@@ -1,6 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.fsm.context import FSMContext
 from database import log_section_click
+from utils.navigation import edit_nav
 
 router = Router()
 
@@ -22,24 +24,27 @@ def get_back_to_docs_keyboard():
     return keyboard
 
 @router.callback_query(F.data == "docs")
-async def docs_main_handler(callback: CallbackQuery):
+async def docs_main_handler(callback: CallbackQuery, state: FSMContext):
     await log_section_click("📑 Необхідні документи")
-    await callback.message.edit_text(
+    text = (
         "📑 <b>Перелік документів для вступу</b>\n\n"
-        "Оберіть вашу категорію, щоб побачити повний список необхідних документів:",
-        reply_markup=get_docs_main_keyboard()
+        "Оберіть вашу категорію, щоб побачити повний список необхідних документів:"
+    )
+    await edit_nav(
+        callback.message, state, text=text, reply_markup=get_docs_main_keyboard()
     )
     await callback.answer()
 
 @router.callback_query(F.data.startswith("docs_"))
-async def docs_detail_handler(callback: CallbackQuery):
+async def docs_detail_handler(callback: CallbackQuery, state: FSMContext):
     data = callback.data
     text = ""
     common_items = (
         "• Паспорт (ID-картка + витяг про реєстрацію)\n"
         "• ІПН (ідентифікаційний код)\n"
         "• 4 кольорові фото (3х4)\n"
-        "• Резерв+ pdf-файл (для хлопців)"
+        "• Резерв+ pdf-файл (для хлопців)\n"
+        "• Медична довідка (форма 086-о)"
         # "• Мотиваційний лист (подається в ел. кабінеті)"
     )
     parent_docs = (
@@ -55,7 +60,6 @@ async def docs_detail_handler(callback: CallbackQuery):
             "• Свідоцтво про базову середню освіту\n"
             "• Додаток до свідоцтва (з оцінками)\n"
             "• Свідоцтво про народження (якщо немає паспорта)\n"
-            "• Медична довідка (форма 086-о)\n"
             f"{parent_docs}"   
         )
     elif data == "docs_11cl":
@@ -86,8 +90,7 @@ async def docs_detail_handler(callback: CallbackQuery):
             "• Для УБД/дітей УБД: посвідчення\n\n"
             "<i>Зверніться до приймальної комісії для перевірки пільги в ЄДЕБО.</i>"
         )
-    await callback.message.edit_text(
-        text,
-        reply_markup=get_back_to_docs_keyboard()
+    await edit_nav(
+        callback.message, state, text=text, reply_markup=get_back_to_docs_keyboard()
     )
     await callback.answer()

@@ -1,69 +1,58 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
-from keyboards.main_menu import main_menu, remove_menu
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from database import log_section_click
+from utils.navigation import replace_nav, edit_nav
 
 router = Router()
 
 def get_specialties_keyboard():
-    buttons = [
-        [InlineKeyboardButton(text=data["title"], callback_data=key)]
-        for key, data in SPECIALTIES.items()
-    ]
-    buttons.append([InlineKeyboardButton(text="🔙 Повернутися до головного меню", callback_data="back_to_main")])
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    builder = InlineKeyboardBuilder()
+    for key, data in SPECIALTIES.items():
+        builder.row(InlineKeyboardButton(text=data["title"], callback_data=key))
+    builder.row(InlineKeyboardButton(text="🔙 Повернутися до головного меню", callback_data="back_to_main"))
+    return builder.as_markup()
+
+def get_specialty_detail_keyboard(spec_url):
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🌐 Детальніше на сайті", url=spec_url)],
+        [InlineKeyboardButton(text="🔙 Назад до списку", callback_data="back_to_specs")]
+    ])
+    return keyboard
 
 @router.message(F.text == "📄 Спеціальності")
 async def show_specialties(message: Message, state: FSMContext):
-    data = await state.get_data()
-    last_msg_id = data.get("last_menu_msg_id")
-    await state.clear()
+    await state.set_state(None)
     await log_section_click("📄 Спеціальності")
-    await message.delete()
-    temp_msg = await message.answer("Завантажую розділ спеціальностей...", reply_markup=remove_menu)
-    await temp_msg.delete()
-    if last_msg_id:
-        try:
-            await message.chat.delete_message(last_msg_id)
-            await state.update_data(last_menu_msg_id=None)
-        except:
-            pass
-    await message.answer(
-        "📄 Оберіть спеціальність із списку нижче:",
-        reply_markup=get_specialties_keyboard()
+    text = (
+        "📄 Оберіть спеціальність із списку нижче:"
+    )
+    await replace_nav(
+        message, state, text=text, reply_markup=get_specialties_keyboard()
     )
 
 @router.callback_query(F.data.startswith("spec_"))
-async def show_specialty(callback: CallbackQuery):
-    spec = SPECIALTIES.get(callback.data)
+async def show_specialty(callback: CallbackQuery, state: FSMContext):
+    spec_code = callback.data
+    spec = SPECIALTIES.get(spec_code)
     if spec:
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🌐 Детальніше на сайті", url=spec["url"])],
-            [InlineKeyboardButton(text="🔙 Назад до списку", callback_data="back_to_specs")]
-        ])
-        await callback.message.edit_text(
-            spec["text"],
-            reply_markup=keyboard
+        await edit_nav(
+            callback.message, 
+            state, 
+            text=spec["text"],
+            reply_markup=get_specialty_detail_keyboard(spec["url"])
         )
+    else:
+        await callback.answer("⚠️ Інформацію про спеціальність не знайдено", show_alert=True)
     await callback.answer()
 
 @router.callback_query(F.data == "back_to_specs")
-async def back_to_specs(callback: CallbackQuery):
-    await callback.message.edit_text(
-        "📄 Оберіть спеціальність:",
+async def back_to_specs(callback: CallbackQuery, state: FSMContext):
+    await edit_nav(callback.message, state,
+        text = "📄 Оберіть спеціальність:",
         reply_markup=get_specialties_keyboard()
     )
-    await callback.answer()
-
-@router.callback_query(F.data == "back_to_main")
-async def back_to_main_handler(callback: CallbackQuery, state: FSMContext):
-    await callback.message.delete()
-    sent_message = await callback.message.answer(
-        "Ви повернулися в головне меню. Оберіть розділ: 👇",
-        reply_markup=main_menu
-    )
-    await state.update_data(last_menu_msg_id=sent_message.message_id)
     await callback.answer()
 
 SPECIALTIES = {

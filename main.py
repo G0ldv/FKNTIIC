@@ -10,7 +10,7 @@ from handlers import router as start_router
 from handlers.admission import router as admission_router
 from handlers.admin import router as admin_router
 from handlers.college import router as college_router
-from handlers.middlewares.outer import ParseModeMiddleware
+from middlewares.outer import ParseModeMiddleware
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
