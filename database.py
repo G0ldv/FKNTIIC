@@ -30,6 +30,27 @@ async def init_db():
                 click_count INTEGER DEFAULT 0
             )
         ''')
+        await conn.execute('''
+            CREATE TABLE IF NOT EXISTS user_topics (
+                user_id BIGINT PRIMARY KEY,
+                topic_id INTEGER NOT NULL
+            )
+        ''')
+
+async def get_topic_id(user_id: int):
+    pool = await get_pool()
+    return await pool.fetchval('SELECT topic_id FROM user_topics WHERE user_id = $1', user_id)
+
+async def save_topic_id(user_id: int, topic_id: int):
+    pool = await get_pool()
+    await pool.execute('''
+        INSERT INTO user_topics (user_id, topic_id) VALUES ($1, $2)
+        ON CONFLICT (user_id) DO UPDATE SET topic_id = EXCLUDED.topic_id
+    ''', user_id, topic_id)
+
+async def get_user_id_by_topic(topic_id: int):
+    pool = await get_pool()
+    return await pool.fetchval('SELECT user_id FROM user_topics WHERE topic_id = $1', topic_id)
 
 async def log_section_click(section_name: str):
     pool = await get_pool()

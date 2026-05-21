@@ -13,6 +13,7 @@ def get_admission_keyboard():
         [InlineKeyboardButton(text="📅 Терміни вступу", callback_data="deadlines")],
         [InlineKeyboardButton(text="📑 Необхідні документи", callback_data="docs")],
         [InlineKeyboardButton(text="🎓 Підготовчі курси", callback_data="prep_courses")],
+        [InlineKeyboardButton(text="📝 Вступні випробування", callback_data="entrance_exams")],
         [InlineKeyboardButton(text="🔙 Повернутися до головного меню", callback_data="back_to_main")],
     ])
     return keyboard

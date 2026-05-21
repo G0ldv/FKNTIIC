@@ -9,7 +9,7 @@ router = Router()
 
 def get_rules_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📥 Завантажити документ (PDF)", callback_data="download_rules")],
+        [InlineKeyboardButton(text="📥 Завантажити документ (PDF)", callback_data="dl_adm_rules")],
         [InlineKeyboardButton(text="🔙 Повернутися в розділ вступника", callback_data="admission_menu")]
     ])
     return keyboard
@@ -36,7 +36,7 @@ async def rules_main_handler(callback: CallbackQuery, state: FSMContext):
     )
     await callback.answer()
 
-@router.callback_query(F.data == "download_rules")
+@router.callback_query(F.data == "dl_adm_rules")
 async def download_rules_handler(callback: CallbackQuery, state: FSMContext):
     document_path = "assets/files/rules.pdf"
     if os.path.exists(document_path):

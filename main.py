@@ -27,8 +27,8 @@ async def main():
 
     dp.include_router(start_router)
     dp.include_router(admission_router)
-    dp.include_router(admin_router)
     dp.include_router(college_router)
+    dp.include_router(admin_router)
 
     await bot.delete_my_commands()
     await bot.set_my_commands([
