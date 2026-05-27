@@ -10,7 +10,7 @@ router = Router()
 def get_prices_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="📥 Завантажити прайс (PDF)", callback_data="download_prices")],
-        [InlineKeyboardButton(text="🌐 На сайті", url="https://www.kntiis.od.ua/uk/vartist-navchannya-2025")],
+        [InlineKeyboardButton(text="🌐 На сайті", url="https://www.kntiis.od.ua/uk/vartist-navchannya-2026")],
         [InlineKeyboardButton(text="🔙 Повернутися до головного меню", callback_data="back_to_main")]
     ])
     return keyboard
